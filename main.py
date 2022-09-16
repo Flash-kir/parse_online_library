@@ -37,8 +37,8 @@ def download_file(url, filename, folder='books/'):
     response = requests.get(url, allow_redirects=False)
     response.raise_for_status()
     check_for_redirect(response)
-    os.makedirs(f'{folder}', exist_ok=True)
-    with open(f'{folder}/{filename}', 'wb') as file:
+    os.makedirs(folder, exist_ok=True)
+    with open(os.path.join(folder, filename), 'wb') as file:
         file.write(response.content)
 
 
@@ -47,8 +47,8 @@ def download_image(url, folder='images/'):
     response.raise_for_status()
     check_for_redirect(response)
     filename = url.split('/')[-1]
-    os.makedirs(f'{folder}', exist_ok=True)
-    with open(f'{folder}/{filename}', 'wb') as file:
+    os.makedirs(folder, exist_ok=True)
+    with open(os.path.join(folder, filename), 'wb') as file:
         file.write(response.content)
 
 
