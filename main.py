@@ -18,9 +18,18 @@ def get_book_data(id):
 
     image_path = soup.find('div', class_='bookimage').find('img')['src']
 
+    comments_blocks = soup.find('div', id='content').find_all('div', class_='texts')
+    comments = []
+
+    print(sanitize_filepath(f'{id}. {title.strip()} - {name.strip()}.txt'))
+
+    for comment_block in comments_blocks:
+        comments.append(comment_block.find('span').text)
+
     return {
         'filename': sanitize_filepath(f'{id}. {title.strip()} - {name.strip()}.txt'),
-        'image_path': f'https://tululu.org/{image_path}'
+        'image_path': f'https://tululu.org/{image_path}',
+        'comments': comments
     }
     
 
