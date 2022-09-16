@@ -1,10 +1,10 @@
 import os
 import argparse
-from urllib.error import HTTPError
 
 import requests
 from bs4 import BeautifulSoup
 from pathvalidate import sanitize_filepath
+from urllib.error import HTTPError
 from urllib.parse import urlparse
 
 
@@ -29,9 +29,9 @@ def parse_book_page(id):
     for genres_block in genres_blocks:
         genres.append(genres_block.text)
 
-
-    print(sanitize_filepath(f'{id}. {title.strip()} - {name.strip()}.txt'))
-    print(genres)
+    print('Название: ', sanitize_filepath(f'{title.strip()}'))
+    print('Автор: ', sanitize_filepath(f'{name.strip()}'))
+    print('Жанры: ', ', '.join(genres))
     return {
         'filename': sanitize_filepath(f'{id}. {title.strip()} - {name.strip()}.txt'),
         'image_path': f'https://tululu.org/{image_path}',
@@ -69,7 +69,7 @@ def main():
     parser.add_argument('start_id', type=int, default=1, help='id книги, с которой начинается скачивание')
     parser.add_argument('end_id', type=int, default=10, help='id книги, которой закончится скачивание')
     args = parser.parse_args()
-    for id in range(args.start_id, args.end_id):
+    for id in range(args.start_id, args.end_id + 1):
         try:
             book_data = parse_book_page(id)
             download_file(
