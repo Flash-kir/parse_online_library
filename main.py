@@ -20,16 +20,22 @@ def get_book_data(id):
 
     comments_blocks = soup.find('div', id='content').find_all('div', class_='texts')
     comments = []
-
-    print(sanitize_filepath(f'{id}. {title.strip()} - {name.strip()}.txt'))
-
     for comment_block in comments_blocks:
         comments.append(comment_block.find('span').text)
 
+    genres_blocks = soup.find('span', class_='d_book').find_all('a')
+    genres = []
+    for genres_block in genres_blocks:
+        genres.append(genres_block.text)
+
+
+    print(sanitize_filepath(f'{id}. {title.strip()} - {name.strip()}.txt'))
+    print(genres)
     return {
         'filename': sanitize_filepath(f'{id}. {title.strip()} - {name.strip()}.txt'),
         'image_path': f'https://tululu.org/{image_path}',
-        'comments': comments
+        'comments': comments,
+        'genres': genres
     }
     
 
