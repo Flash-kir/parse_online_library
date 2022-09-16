@@ -1,4 +1,5 @@
 import os
+import argparse
 from urllib.error import HTTPError
 
 import requests
@@ -64,7 +65,11 @@ def download_image(url, folder='images/'):
 
 
 def main():
-    for id in range(1, 10):
+    parser = argparse.ArgumentParser()
+    parser.add_argument('start_id', type=int, default=1, help='id книги, с которой начинается скачивание')
+    parser.add_argument('end_id', type=int, default=10, help='id книги, которой закончится скачивание')
+    args = parser.parse_args()
+    for id in range(args.start_id, args.end_id):
         try:
             book_data = parse_book_page(id)
             download_file(
