@@ -29,7 +29,7 @@ def parse_book_page(book_id):
     
 
 def check_for_redirect(response):
-    if response.status_code // 100 == 3:
+    if response.history:
         raise HTTPError("Не найдена книга")
 
 
