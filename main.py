@@ -7,7 +7,7 @@ from pathvalidate import sanitize_filepath
 from urllib.parse import urlparse
 
 
-def get_book_data(id):
+def parse_book_page(id):
     url = f'https://tululu.org/b{id}/'
     response = requests.get(url, allow_redirects=False)
     response.raise_for_status()
@@ -66,7 +66,7 @@ def download_image(url, folder='images/'):
 def main():
     for id in range(1, 10):
         try:
-            book_data = get_book_data(id)
+            book_data = parse_book_page(id)
             download_file(
                 f'https://tululu.org/txt.php?id={id}', 
                 book_data['filename']
