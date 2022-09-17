@@ -34,6 +34,7 @@ def parse_book_page(book_html, book_id):
     
 
 def check_for_redirect(response):
+    print(response.url)
     if response.history:
         raise HTTPError("Не найдена книга")
 
@@ -42,21 +43,17 @@ def download_book_text_to_file(book_id, filename, folder='books/'):
     params = {
         'id': book_id
     }
-    try:
-        response = requests.get('https://tululu.org/txt.php', params=params, allow_redirects=False)
-        response.raise_for_status()
-        check_for_redirect(response)
-        os.makedirs(folder, exist_ok=True)
-        with open(os.path.join(folder, filename), 'wb') as file:
-            file.write(response.content)
-    except requests.exceptions.ConnectionError:
-            print('соединение потеряно')
-            time.sleep(5)
+    response = requests.get('https://tululu.org/txt.php', params=params, allow_redirects=False)
+    response.raise_for_status()
+    check_for_redirect(response)
+    os.makedirs(folder, exist_ok=True)
+    with open(os.path.join(folder, filename), 'wb') as file:
+        file.write(response.content)
 
 
 
 def download_image(url, folder='images/'):
-    response = requests.get(url, allow_redirects=False)
+    response = requests.get(url, allow_redirects=True)
     response.raise_for_status()
     check_for_redirect(response)
     filename = url.split('/')[-1]
@@ -84,6 +81,7 @@ def main():
             print('ссылка не верна')
         except requests.exceptions.ConnectionError:
             print('соединение потеряно')
+            time.sleep(5)
 
 
 if __name__ == '__main__':
