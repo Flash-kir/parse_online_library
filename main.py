@@ -1,5 +1,6 @@
-import os
 import argparse
+import os
+import time
 
 import requests
 from bs4 import BeautifulSoup
@@ -12,7 +13,7 @@ def get_book_html(book_id):
     url = f'https://tululu.org/b{book_id}/'
     response = requests.get(url, allow_redirects=False)
     response.raise_for_status()
-    '''check_for_redirect(response)'''
+    check_for_redirect(response)
     return response.text
 
 
@@ -26,7 +27,7 @@ def parse_book_page(book_html, book_id):
 
     return {
         'filename': sanitize_filepath(f'{book_id}. {title.strip()} - {name.strip()}.txt'),
-        'image_path': urljoin('https://tululu.org/', image_path),
+        'image_path': urljoin(f'https://tululu.org/b{book_id}/', image_path),
         'comments': comments,
         'genres': genres
     }
@@ -50,6 +51,7 @@ def download_book_text_to_file(book_id, filename, folder='books/'):
             file.write(response.content)
     except requests.exceptions.ConnectionError:
             print('соединение потеряно')
+            time.sleep(5)
 
 
 
