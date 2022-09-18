@@ -35,7 +35,7 @@ def parse_book_page(book_html, book_id):
 
 def check_for_redirect(response):
     if response.history:
-        raise HTTPError("Не найдена книга")
+        raise HTTPError('Не найдена книга')
 
 
 def download_book_text_to_file(book_id, filename, folder='books/'):
