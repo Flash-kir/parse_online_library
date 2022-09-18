@@ -34,7 +34,6 @@ def parse_book_page(book_html, book_id):
     
 
 def check_for_redirect(response):
-    print(response.url)
     if response.history:
         raise HTTPError("Не найдена книга")
 
