@@ -20,10 +20,11 @@ def get_category_page(page_num: int) -> str:
 
 def parse_category_page(page_html: str) -> list:
     soup = BeautifulSoup(page_html, 'lxml')
-    page_books = soup.find('body').find('div', id='content').find_all('div', class_='bookimage')
+    selector = 'body div[id="content"] .bookimage a[href]'
+    books_urls = soup.select(selector)
     books_jsons = []
-    for page_book in page_books:
-        book_url = urljoin(BASE_URL, page_book.find('a')['href'])
+    for book_link in books_urls:
+        book_url = urljoin(BASE_URL, book_link['href'])
         print(book_url)
         book_json = download_book(book_url)
         if book_json:
