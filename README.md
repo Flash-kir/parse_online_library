@@ -17,9 +17,12 @@
 
     python parse_tululu_category.py [-h] [-s START_PAGE] [-e END_PAGE] [-f DEST_FOLDER] [-i SKIP_IMGS] [-t SKIP_TXT] [-j JSON_PATH]
 
-    -s START_PAGE, --start_page START_PAGE номер страницы в разделе фантастики, с которой начинается скачивание, по умолчанию значение 1
-    -e END_PAGE, --end_page END_PAGE номер страницы в разделе фантастики, которой закончится скачивание, по умолчанию значение 701
-    -f DEST_FOLDER, --dest_folder DEST_FOLDER путь к каталогу с результатами парсинга: картинкам, книгам, JSON, по умолчанию пустое значение
+    -s START_PAGE, --start_page START_PAGE номер страницы в разделе фантастики, 
+    с которой начинается скачивание, по умолчанию значение 1
+    -e END_PAGE, --end_page END_PAGE номер страницы в разделе фантастики, 
+    которой закончится скачивание, по умолчанию значение 701
+    -f DEST_FOLDER, --dest_folder DEST_FOLDER путь к каталогу с результатами 
+    парсинга: картинкам, книгам, JSON, по умолчанию пустое значение
     -i SKIP_IMGS, --skip_imgs SKIP_IMGS не скачивать картинки, по умолчанию False
     -t SKIP_TXT, --skip_txt SKIP_TXT не скачивать книги, по умолчанию False
     -j JSON_PATH, --json_path JSON_PATH указать свой путь к *.json файлу с результатами, по умолчанию пустое значение
