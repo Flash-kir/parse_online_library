@@ -1,3 +1,4 @@
+import argparse
 import os
 
 import requests
@@ -33,16 +34,19 @@ def parse_category_page(page_html: str) -> list:
     return books_jsons
 
 
-def main(max: int):
-    for page_num in range(1, max + 1):
+def main(start_page: int, end_page: int):
+    for page_num in range(start_page, end_page):
         page_html = get_category_page(page_num)
         books = parse_category_page(page_html)
-        with open('books.json', 'w', encoding='utf-8') as file:
+        with open(f'books({start_page}-{end_page - 1}_pages).json', 'w', encoding='utf-8') as file:
             json.dump(books, file, ensure_ascii=False)
 
         
 
 
 if __name__ == '__main__':
-    # argparse
-    main(1)
+    parser = argparse.ArgumentParser(description="Программа скачивает книги с сайта https://tululu.org/")
+    parser.add_argument('-s', '--start_page', type=int, default=1, help='номер страницы в разделе фантастики, с которой начинается скачивание')
+    parser.add_argument('-e', '--end_page', type=int, default=701, help='номер страницы в разделе фантастики, которой закончится скачивание')
+    args = parser.parse_args()
+    main(args.start_page, args.end_page)
