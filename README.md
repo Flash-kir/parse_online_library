@@ -7,7 +7,7 @@
 
 Клонируйте репозиторий:
 
-    git@github.com:Flash-kir/parse_online_library.git
+    git clone git@github.com:Flash-kir/parse_online_library.git
 
 Для установки компонентов выполните:
 
