@@ -1,7 +1,9 @@
 import argparse
 import os
+from turtle import update
 
 import requests
+from tqdm import tqdm
 from urllib.parse import urljoin
 from bs4 import BeautifulSoup
 import json
@@ -24,9 +26,8 @@ def parse_category_page(page_html: str, dest_folder: str, skip_imgs: bool, skip_
     selector = 'body div[id="content"] .bookimage a[href]'
     books_urls = soup.select(selector)
     books_jsons = []
-    for book_link in books_urls:
+    for book_link in tqdm(books_urls):
         book_url = urljoin(BASE_URL, book_link['href'])
-        print(book_url)
         book_json = download_book(
             book_url, 
             dest_folder, 
@@ -34,23 +35,25 @@ def parse_category_page(page_html: str, dest_folder: str, skip_imgs: bool, skip_
             skip_txt
         )
         if book_json:
-            if book_json['book_path']:
-                books_jsons.append(book_json)
+            books_jsons.append(book_json)
     return books_jsons
 
 
 def main(start_page: int, end_page: int, dest_folder: str, skip_imgs: bool, skip_txt: bool, json_path: str):
+    books = []
     for page_num in range(start_page, end_page):
         page_html = get_category_page(page_num)
-        books = parse_category_page(page_html, dest_folder, skip_imgs, skip_txt)
-        result_json_path = ''
-        if json_path:
-            result_json_path = json_path
-        elif dest_folder:
-            result_json_path = dest_folder
-        os.makedirs(result_json_path, exist_ok=True)
-        with open(os.path.join(result_json_path, f'books({start_page}-{end_page - 1}_pages).json'), 'w', encoding='utf-8') as file:
-            json.dump(books, file, ensure_ascii=False)        
+        print(f'Page {page_num} downloading')
+        for book_json in parse_category_page(page_html, dest_folder, skip_imgs, skip_txt):
+            books.append(book_json)
+    result_json_path = ''
+    if json_path:
+        result_json_path = json_path
+    elif dest_folder:
+        result_json_path = dest_folder
+    os.makedirs(result_json_path, exist_ok=True)
+    with open(os.path.join(result_json_path, f'books({start_page}-{end_page - 1}_pages).json'), 'w', encoding='utf-8') as file:
+        json.dump(books, file, ensure_ascii=False)
 
 
 if __name__ == '__main__':
