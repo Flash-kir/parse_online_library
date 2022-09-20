@@ -64,43 +64,28 @@ def download_image(url, dest_folder, folder='images/'):
     return os.path.join(dest_folder, folder, filename)
 
 
-def get_book_id_from_url(book_url: str):
-    return book_url.split('/b')[-1].split('/')[0]
-
-
-def download_book(book_url: str, dest_folder: str, skip_imgs: bool, skip_txt: bool):
+def parse_book(book_url: str, dest_folder: str, skip_imgs: bool, skip_txt: bool):
     book_html = get_book_html(book_url)
-    book_content = parse_book_page(book_html, book_url)
-    image_src = ''
-    book_path = ''
-    if not skip_imgs:
-        image_src = download_image(book_content['image_path'], dest_folder)
-    if not skip_txt:
-        book_path = download_book_text_to_file(
-            get_book_id_from_url(book_url), 
-            book_content['filename'],
-            dest_folder
-        )
-    return {
-        'title': book_content['title'],
-        'author': book_content['author'],
-        'image_src': image_src,
-        'book_path': book_path,
-        'comments': book_content['comments'],
-        'genres': book_content['genres']
-    }
-
+    return parse_book_page(book_html, book_url)
 
 
 def main(start_id: int, end_id: int, dest_folder: str, skip_imgs: bool, skip_txt: bool):
     for book_id in range(start_id, end_id + 1):
         try:
-            download_book(
+            book_content = parse_book(
                 urljoin('https://tululu.org/', f'b{book_id}/'),
                 dest_folder, 
                 skip_imgs, 
                 skip_txt
             )
+            if not skip_imgs:
+                download_image(book_content['image_path'], dest_folder)
+            if not skip_txt:
+                download_book_text_to_file(
+                    book_id, 
+                    book_content['filename'],
+                    dest_folder
+                )
         except HTTPError:
             print('редирект')
         except AttributeError:
@@ -116,7 +101,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Программа скачивает книги с сайта https://tululu.org/")
     parser.add_argument('start_id', type=int, default=1, help='id книги, с которой начинается скачивание')
     parser.add_argument('end_id', type=int, default=10, help='id книги, которой закончится скачивание')
-    parser.add_argument('-f', '--dest_folder', type=str, default='', help='путь к каталогу с результатами парсинга: картинкам, книгам, JSON')
+    parser.add_argument('-f', '--dest_folder', default='', help='путь к каталогу с результатами парсинга: картинкам, книгам, JSON')
     parser.add_argument('-i', '--skip_imgs', type=bool, default=False, help='не скачивать картинки')
     parser.add_argument('-t', '--skip_txt', type=bool, default=False, help='не скачивать книги')
     args = parser.parse_args()
