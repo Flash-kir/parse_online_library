@@ -13,10 +13,6 @@ from parse_tululu_book import check_for_redirect, parse_book, download_image, do
 FANTASTIC_CATEGORY_URL = urljoin('https://tululu.org/', 'l55/')
 
 
-def get_category_url(page_num: int) -> str:
-    return urljoin(FANTASTIC_CATEGORY_URL, f'{page_num}/')
-
-
 def get_category_page(category_url: str) -> str:
     response = requests.get(category_url, allow_redirects=False)
     response.raise_for_status()
@@ -52,17 +48,11 @@ def fetch_books(start_page: int, end_page: int, dest_folder: str, skip_imgs: boo
     books = []
     try:
         for page_num in range(start_page, end_page):
-            category_url = get_category_url(page_num)
-            page_html = get_category_page(category_url)
+            page_html = get_category_page(urljoin(FANTASTIC_CATEGORY_URL, f'{page_num}/'))
             print(f'Page {page_num} downloading')
             page_books_urls = parse_category_page(page_html, category_url)
             for book_url in tqdm(page_books_urls):
-                book_content = parse_book(
-                    book_url, 
-                    dest_folder, 
-                    skip_imgs, 
-                    skip_txt
-                )
+                book_content = parse_book(book_url)
                 image_src = ''
                 book_path = ''
                 if not skip_imgs:

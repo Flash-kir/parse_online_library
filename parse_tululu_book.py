@@ -9,13 +9,6 @@ from urllib.error import HTTPError
 from urllib.parse import urljoin
 
 
-def get_book_html(book_url: str):
-    response = requests.get(book_url, allow_redirects=False)
-    response.raise_for_status()
-    check_for_redirect(response)
-    return response.text
-
-
 def parse_book_page(book_html, book_url: str) -> dict:
     soup = BeautifulSoup(book_html, 'lxml')
     title_block = soup.find('body').find('div', id='content').find('h1')
@@ -64,9 +57,11 @@ def download_image(url, dest_folder, folder='images/'):
     return os.path.join(dest_folder, folder, filename)
 
 
-def parse_book(book_url: str, dest_folder: str, skip_imgs: bool, skip_txt: bool):
-    book_html = get_book_html(book_url)
-    return parse_book_page(book_html, book_url)
+def parse_book(book_url: str):
+    response = requests.get(book_url, allow_redirects=False)
+    response.raise_for_status()
+    check_for_redirect(response)
+    return parse_book_page(response.text, book_url)
 
 
 def main(start_id: int, end_id: int, dest_folder: str, skip_imgs: bool, skip_txt: bool):
