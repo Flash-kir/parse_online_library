@@ -46,12 +46,19 @@ def parse_args():
 
 def fetch_books(start_page: int, end_page: int, dest_folder: str, skip_imgs: bool, skip_txt: bool, json_path: str):
     books = []
-    try:
-        for page_num in range(start_page, end_page):
-            page_html = get_category_page(urljoin(FANTASTIC_CATEGORY_URL, f'{page_num}/'))
+    for page_num in range(start_page, end_page):
+        try:
+            category_page_url = urljoin(FANTASTIC_CATEGORY_URL, f'{page_num}/')
+            page_html = get_category_page(category_page_url)
             print(f'Page {page_num} downloading')
-            page_books_urls = parse_category_page(page_html, category_url)
-            for book_url in tqdm(page_books_urls):
+            page_books_urls = parse_category_page(page_html, category_page_url)
+        except requests.exceptions.HTTPError:
+            print('ссылка на страницу каталога не верна')
+        except requests.exceptions.ConnectionError:
+            print('соединение потеряно')
+            time.sleep(5)
+        for book_url in tqdm(page_books_urls):
+            try:
                 book_content = parse_book(book_url)
                 image_src = ''
                 book_path = ''
@@ -72,11 +79,11 @@ def fetch_books(start_page: int, end_page: int, dest_folder: str, skip_imgs: boo
                         'comments': book_content['comments'],
                         'genres': book_content['genres']
                     })
-    except requests.exceptions.HTTPError:
-        print('ссылка не верна')
-    except requests.exceptions.ConnectionError:
-        print('соединение потеряно')
-        time.sleep(5)
+            except requests.exceptions.HTTPError:
+                print('ссылка на книгу не верна')
+            except requests.exceptions.ConnectionError:
+                print('соединение потеряно')
+                time.sleep(5)
     result_json_path = ''
     if json_path:
         result_json_path = json_path

@@ -18,8 +18,8 @@ def parse_book_page(book_html, book_url: str) -> dict:
     genres = [x.text for x in soup.find('span', class_='d_book').find_all('a')]
 
     return {
-        'title': f'{title.strip()}',
-        'author': f'{name.strip()}',
+        'title': title.strip(),
+        'author': name.strip(),
         'filename': sanitize_filepath(f'{title.strip()} - {name.strip()}.txt'),
         'image_path': urljoin(book_url, image_path),
         'comments': comments,
@@ -40,9 +40,10 @@ def download_book_text_to_file(book_id, filename: str, dest_folder, folder='book
     response.raise_for_status()
     check_for_redirect(response)
     os.makedirs(os.path.join(dest_folder, folder), exist_ok=True)
-    with open(os.path.join(dest_folder, folder, filename), 'wb') as file:
+    book_filename = os.path.join(dest_folder, folder, filename)
+    with open(book_filename, 'wb') as file:
         file.write(response.content)
-    return os.path.join(dest_folder, folder, filename)
+    return book_filename
 
 
 
@@ -52,9 +53,10 @@ def download_image(url, dest_folder, folder='images/'):
     check_for_redirect(response)
     filename = url.split('/')[-1]
     os.makedirs(os.path.join(dest_folder, folder), exist_ok=True)
-    with open(os.path.join(dest_folder, folder, filename), 'wb') as file:
+    image_filename = os.path.join(dest_folder, folder, filename)
+    with open(image_filename, 'wb') as file:
         file.write(response.content)
-    return os.path.join(dest_folder, folder, filename)
+    return image_filename
 
 
 def parse_book(book_url: str):
@@ -64,7 +66,17 @@ def parse_book(book_url: str):
     return parse_book_page(response.text, book_url)
 
 
-def main(start_id: int, end_id: int, dest_folder: str, skip_imgs: bool, skip_txt: bool):
+def parse_args():
+    parser = argparse.ArgumentParser(description="Программа скачивает книги с сайта https://tululu.org/")
+    parser.add_argument('start_id', type=int, default=1, help='id книги, с которой начинается скачивание')
+    parser.add_argument('end_id', type=int, default=10, help='id книги, которой закончится скачивание')
+    parser.add_argument('-f', '--dest_folder', default='', help='путь к каталогу с результатами парсинга: картинкам, книгам, JSON')
+    parser.add_argument('-i', '--skip_imgs', type=bool, default=False, help='не скачивать картинки')
+    parser.add_argument('-t', '--skip_txt', type=bool, default=False, help='не скачивать книги')
+    return parser.parse_args()
+
+
+def fetch_books(start_id: int, end_id: int, dest_folder: str, skip_imgs: bool, skip_txt: bool):
     for book_id in range(start_id, end_id + 1):
         try:
             book_content = parse_book(
@@ -92,18 +104,16 @@ def main(start_id: int, end_id: int, dest_folder: str, skip_imgs: bool, skip_txt
             time.sleep(5)
 
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description="Программа скачивает книги с сайта https://tululu.org/")
-    parser.add_argument('start_id', type=int, default=1, help='id книги, с которой начинается скачивание')
-    parser.add_argument('end_id', type=int, default=10, help='id книги, которой закончится скачивание')
-    parser.add_argument('-f', '--dest_folder', default='', help='путь к каталогу с результатами парсинга: картинкам, книгам, JSON')
-    parser.add_argument('-i', '--skip_imgs', type=bool, default=False, help='не скачивать картинки')
-    parser.add_argument('-t', '--skip_txt', type=bool, default=False, help='не скачивать книги')
-    args = parser.parse_args()
-    main(
-        args.start_id, 
+def main():
+    args = parse_args()
+    fetch_books(
+        args.start_id,
         args.end_id,
         args.dest_folder,
         args.skip_imgs,
         args.skip_txt,
     )
+
+
+if __name__ == '__main__':
+    main()
