@@ -40,10 +40,10 @@ def download_book_text_to_file(book_id, filename: str, dest_folder, folder='book
     response.raise_for_status()
     check_for_redirect(response)
     os.makedirs(os.path.join(dest_folder, folder), exist_ok=True)
-    book_filename = os.path.join(dest_folder, folder, filename)
-    with open(book_filename, 'wb') as file:
+    book_filepath = os.path.join(dest_folder, folder, filename)
+    with open(book_filepath, 'wb') as file:
         file.write(response.content)
-    return book_filename
+    return book_filepath
 
 
 
@@ -53,17 +53,18 @@ def download_image(url, dest_folder, folder='images/'):
     check_for_redirect(response)
     filename = url.split('/')[-1]
     os.makedirs(os.path.join(dest_folder, folder), exist_ok=True)
-    image_filename = os.path.join(dest_folder, folder, filename)
-    with open(image_filename, 'wb') as file:
+    image_filepath = os.path.join(dest_folder, folder, filename)
+    with open(image_filepath, 'wb') as file:
         file.write(response.content)
-    return image_filename
+    return image_filepath
 
 
 def parse_book(book_url: str):
     response = requests.get(book_url, allow_redirects=False)
     response.raise_for_status()
     check_for_redirect(response)
-    return parse_book_page(response.text, book_url)
+    parsed_book_page = parse_book_page(response.text, book_url)
+    return parsed_book_page
 
 
 def parse_args():
