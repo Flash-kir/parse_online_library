@@ -132,4 +132,5 @@ dmypy.json
 books.json
 /books
 /images
+/pages
 /*.json
