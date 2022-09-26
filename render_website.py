@@ -1,9 +1,10 @@
 import os
 import json
 
-from http.server import HTTPServer, SimpleHTTPRequestHandler
+#from http.server import HTTPServer, SimpleHTTPRequestHandler
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
+from livereload import Server, shell
 
 
 def fetch_images(folder='./books/images'):
@@ -32,9 +33,13 @@ def main():
 
     with open('index.html', 'w', encoding="utf8") as file:
         file.write(rendered_page)
+    
+    server = Server()
+    server.watch('*.*', shell('index html'))
+    server.serve(root='.', port='8000')
 
-    server = HTTPServer(('0.0.0.0', 8000), SimpleHTTPRequestHandler)
-    server.serve_forever()
+#    server = HTTPServer(('0.0.0.0', 8000), SimpleHTTPRequestHandler)
+#    server.serve_forever()
 #    with open(path, mode='r', encoding='utf-8') as my_file:
 
 if __name__ == '__main__':
