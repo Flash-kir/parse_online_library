@@ -130,7 +130,7 @@ dmypy.json
 
 # static files
 books.json
-/books
+#/books
 #/images
 #/pages
 /*.json
