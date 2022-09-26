@@ -30,10 +30,22 @@ def main():
     
     books_lists_devided_by_20 = list(more_itertools.chunked(books_list, 20))
     page_number = 0
+    page_numbers = []
     for books_lists in books_lists_devided_by_20:
         page_number += 1
+        near_pages = {
+            'previous': max(1, page_number - 1),
+            'current': page_number,
+            'next': min(len(books_lists_devided_by_20), page_number + 1),
+            'page_count': len(books_lists_devided_by_20)
+        }
+        page_numbers.append(page_number)
         template = env.get_template('template.html')
-        rendered_page = template.render(books=books_lists)
+        rendered_page = template.render(
+            books=books_lists, 
+            page_numbers=page_numbers, 
+            near_pages=near_pages
+        )
         os.makedirs(os.path.join('./pages'), exist_ok=True)
         with open(os.path.join('./pages', f'index{page_number}.html'), 'w', encoding="utf8") as file:
             file.write(rendered_page)
