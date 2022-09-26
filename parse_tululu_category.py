@@ -40,7 +40,7 @@ def parse_args():
     parser.add_argument('-f', '--dest_folder', default='', help='путь к каталогу с результатами парсинга: картинкам, книгам, JSON')
     parser.add_argument('-i', '--skip_imgs', type=bool, default=False, help='не скачивать картинки')
     parser.add_argument('-t', '--skip_txt', type=bool, default=False, help='не скачивать книги')
-    parser.add_argument('-j', '--json_path', default='', help='указать свой путь к *.json файлу с результатами')
+    parser.add_argument('-j', '--json_path', default='./', help='указать свой путь к *.json файлу с результатами')
     return parser.parse_args()
 
 
