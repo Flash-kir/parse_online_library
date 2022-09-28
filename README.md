@@ -2,10 +2,7 @@
 
 Программа скачивает книги с сайта https://tululu.org/ и складывает в папку "/books".
 Также скачиваются обложки книг в папку "/images". По окончании скачивания книг сохраняется файл, содержащий список словарей с параметрами книг, скачанных с сайта https://tululu.org/
-Оффлайн версия раздела фантастики библиотеки доступна по ссылке:
-
-    https://flash-kir.github.io/parse_online_library/pages/index1.html
-    
+Оффлайн версия раздела фантастики библиотеки доступна на [github pages](https://flash-kir.github.io/parse_online_library/pages/index1.html).
 
 ## Установка
 

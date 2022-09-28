@@ -41,6 +41,8 @@ def download_book_text_to_file(book_id, filename: str, dest_folder, folder='book
     check_for_redirect(response)
     os.makedirs(os.path.join(dest_folder, folder), exist_ok=True)
     book_filepath = os.path.join(dest_folder, folder, filename)
+    if not response.content:
+        return ''
     with open(book_filepath, 'wb') as file:
         file.write(response.content)
     return book_filepath
@@ -69,8 +71,8 @@ def parse_book(book_url: str):
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Программа скачивает книги с сайта https://tululu.org/")
-    parser.add_argument('start_id', type=int, default=1, help='id книги, с которой начинается скачивание')
-    parser.add_argument('end_id', type=int, default=10, help='id книги, которой закончится скачивание')
+    parser.add_argument('--start_id', type=int, default=1, help='id книги, с которой начинается скачивание')
+    parser.add_argument('--end_id', type=int, default=10, help='id книги, которой закончится скачивание')
     parser.add_argument('-f', '--dest_folder', default='', help='путь к каталогу с результатами парсинга: картинкам, книгам, JSON')
     parser.add_argument('-i', '--skip_imgs', type=bool, default=False, help='не скачивать картинки')
     parser.add_argument('-t', '--skip_txt', type=bool, default=False, help='не скачивать книги')
@@ -81,10 +83,7 @@ def fetch_books(start_id: int, end_id: int, dest_folder: str, skip_imgs: bool, s
     for book_id in range(start_id, end_id + 1):
         try:
             book_content = parse_book(
-                urljoin('https://tululu.org/', f'b{book_id}/'),
-                dest_folder, 
-                skip_imgs, 
-                skip_txt
+                urljoin('https://tululu.org/', f'b{book_id}/')
             )
             if not skip_imgs:
                 download_image(book_content['image_path'], dest_folder)

@@ -4,7 +4,7 @@ import time
 
 import requests
 from tqdm import tqdm
-from urllib.parse import urljoin
+from urllib.parse import urljoin, quote
 from bs4 import BeautifulSoup
 import json
 
@@ -74,8 +74,8 @@ def fetch_books(start_page: int, end_page: int, dest_folder: str, skip_imgs: boo
                     books.append({
                         'title': book_content['title'],
                         'author': book_content['author'],
-                        'image_src': image_src,
-                        'book_path': book_path,
+                        'image_src': quote(image_src),
+                        'book_path': quote(book_path),
                         'comments': book_content['comments'],
                         'genres': book_content['genres']
                     })
