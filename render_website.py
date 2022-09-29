@@ -1,3 +1,4 @@
+from importlib import reload
 import os
 import json
 
@@ -25,29 +26,25 @@ def main():
         autoescape=select_autoescape(['html', 'xml'])
     )
     page_books_count = 20
-    books_lists_devided_by_20 = list(more_itertools.chunked(books_catalogue, page_books_count))
-    page_numbers = []
-    for page_number, books_lists in enumerate(books_lists_devided_by_20):
+    devided_books_lists = list(more_itertools.chunked(books_catalogue, page_books_count))
+    for page_number, books_lists in enumerate(devided_books_lists, start=1):
         near_pages = {
-            'current': page_number + 1,
-            'page_count': len(books_lists_devided_by_20)
+            'current': page_number,
+            'page_count': len(devided_books_lists)
         }
-        page_numbers.append(page_number + 1)
         template = env.get_template('template.html')
         rendered_page = template.render(
             books=books_lists, 
-            page_numbers=page_numbers, 
             near_pages=near_pages
         )
         os.makedirs(os.path.join('./pages'), exist_ok=True)
-        with open(os.path.join('./pages', f'index{page_number + 1}.html'), 'w', encoding="utf8") as file:
+        with open(os.path.join('./pages', f'index{page_number}.html'), 'w', encoding="utf8") as file:
             file.write(rendered_page)
     
     server = Server()
-    server.watch('*.*')
+    server.watch('*.html')
+    server.watch('pages/*.html')
     server.serve(root='.', port='8000')
-#    server = HTTPServer(('0.0.0.0', 8000), SimpleHTTPRequestHandler)
-#    server.serve_forever()
 
 
 if __name__ == '__main__':
